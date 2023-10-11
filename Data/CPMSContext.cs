@@ -24,6 +24,30 @@ namespace CPMS.Data
 
         public DbSet<ProjectResponse> ProjectsResponses { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Employee>()
+                .HasOne(e => e.Department)
+                .WithMany(d => d.Employees)
+                .HasForeignKey(e => e.DepartmentId);
+
+            modelBuilder.Entity<Project>()
+            .HasMany(p => p.Employees)
+            .WithMany(e => e.Projects)
+            .UsingEntity<ProjectEmployee>(
+                j => j
+                    .HasOne(pe => pe.Employee)
+                    .WithMany()
+                    .HasForeignKey(pe => pe.Emp_Id),
+                j => j
+                    .HasOne(pe => pe.Project)
+                    .WithMany()
+                    .HasForeignKey(pe => pe.Project_Id)
+    );
+        }
+
+        public DbSet<CPMS.Models.ProjectEmployee>? ProjectEmployee { get; set; }
+
 
     }
 }

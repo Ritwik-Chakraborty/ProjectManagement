@@ -7,6 +7,8 @@
         public string? Email { get; init; }
         public DateTime DateOfJoining { get; init; }
         public int DepartmentId { get; init; }
-        public string? DepartmentName { get; internal set; }
+        public Department? Department { get; init; }
+        public string? DepartmentName { get; init; }
+        public ICollection<Project>? Projects { get; init;}
     }
 }

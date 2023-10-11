@@ -31,7 +31,9 @@ namespace CPMS.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ProjectManagerId = table.Column<int>(type: "int", nullable: false)
+                    ProjectManagerId = table.Column<int>(type: "int", nullable: false),
+                    ProjectManagerName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProjectManagerEmail = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -80,16 +82,56 @@ namespace CPMS.Migrations
                 {
                     table.PrimaryKey("PK_Employee", x => x.EmployeeId);
                     table.ForeignKey(
+                        name: "FK_Employee_Department_DepartmentId",
+                        column: x => x.DepartmentId,
+                        principalTable: "Department",
+                        principalColumn: "DepartmentId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Employee_ProjectResponse_ProjectResponseId",
                         column: x => x.ProjectResponseId,
                         principalTable: "ProjectResponse",
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ProjectEmployee",
+                columns: table => new
+                {
+                    Project_Id = table.Column<int>(type: "int", nullable: false),
+                    Emp_Id = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProjectEmployee", x => new { x.Emp_Id, x.Project_Id });
+                    table.ForeignKey(
+                        name: "FK_ProjectEmployee_Employee_Emp_Id",
+                        column: x => x.Emp_Id,
+                        principalTable: "Employee",
+                        principalColumn: "EmployeeId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProjectEmployee_Project_Project_Id",
+                        column: x => x.Project_Id,
+                        principalTable: "Project",
+                        principalColumn: "ProjectId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employee_DepartmentId",
+                table: "Employee",
+                column: "DepartmentId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Employee_ProjectResponseId",
                 table: "Employee",
                 column: "ProjectResponseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectEmployee_Project_Id",
+                table: "ProjectEmployee",
+                column: "Project_Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProjectResponse_ProjectId",
@@ -100,10 +142,13 @@ namespace CPMS.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Department");
+                name: "ProjectEmployee");
 
             migrationBuilder.DropTable(
                 name: "Employee");
+
+            migrationBuilder.DropTable(
+                name: "Department");
 
             migrationBuilder.DropTable(
                 name: "ProjectResponse");

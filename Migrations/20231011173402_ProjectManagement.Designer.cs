@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CPMS.Migrations
 {
     [DbContext(typeof(CPMSContext))]
-    [Migration("20231011143826_ProjectManagement")]
+    [Migration("20231011173402_ProjectManagement")]
     partial class ProjectManagement
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -68,6 +68,8 @@ namespace CPMS.Migrations
 
                     b.HasKey("EmployeeId");
 
+                    b.HasIndex("DepartmentId");
+
                     b.HasIndex("ProjectResponseId");
 
                     b.ToTable("Employee");
@@ -87,8 +89,14 @@ namespace CPMS.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ProjectManagerEmail")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("ProjectManagerId")
                         .HasColumnType("int");
+
+                    b.Property<string>("ProjectManagerName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -96,6 +104,21 @@ namespace CPMS.Migrations
                     b.HasKey("ProjectId");
 
                     b.ToTable("Project");
+                });
+
+            modelBuilder.Entity("CPMS.Models.ProjectEmployee", b =>
+                {
+                    b.Property<int>("Emp_Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Project_Id")
+                        .HasColumnType("int");
+
+                    b.HasKey("Emp_Id", "Project_Id");
+
+                    b.HasIndex("Project_Id");
+
+                    b.ToTable("ProjectEmployee");
                 });
 
             modelBuilder.Entity("CPMS.Models.ProjectResponse", b =>
@@ -136,9 +159,36 @@ namespace CPMS.Migrations
 
             modelBuilder.Entity("CPMS.Models.Employee", b =>
                 {
+                    b.HasOne("CPMS.Models.Department", "Department")
+                        .WithMany("Employees")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("CPMS.Models.ProjectResponse", null)
                         .WithMany("Employees")
                         .HasForeignKey("ProjectResponseId");
+
+                    b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("CPMS.Models.ProjectEmployee", b =>
+                {
+                    b.HasOne("CPMS.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("Emp_Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CPMS.Models.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("Project_Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("CPMS.Models.ProjectResponse", b =>
@@ -150,6 +200,11 @@ namespace CPMS.Migrations
                         .IsRequired();
 
                     b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("CPMS.Models.Department", b =>
+                {
+                    b.Navigation("Employees");
                 });
 
             modelBuilder.Entity("CPMS.Models.ProjectResponse", b =>

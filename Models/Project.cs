@@ -9,7 +9,11 @@ namespace CPMS.Models
         public DateTime StartDate { get; init; }
         public DateTime EndDate { get; init; }
         public int ProjectManagerId { get; init; }
-        [NotMapped]
-        public ICollection<int>? EmployeeIds { get; init; }
+
+        public string? ProjectManagerName { get; init; }
+
+        public string? ProjectManagerEmail { get; init; }
+
+        public ICollection<Employee>? Employees { get; init; }
     }
 }

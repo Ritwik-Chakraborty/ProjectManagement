@@ -34,6 +34,16 @@
                 <span asp-validation-for="ProjectManagerId" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="ProjectManagerName" class="control-label"></label>
+                <input asp-for="ProjectManagerName" class="form-control" />
+                <span asp-validation-for="ProjectManagerName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProjectManagerEmail" class="control-label"></label>
+                <input asp-for="ProjectManagerEmail" class="form-control" />
+                <span asp-validation-for="ProjectManagerEmail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>

@@ -22,9 +22,8 @@ namespace CPMS.Controllers
         // GET: Employees
         public async Task<IActionResult> Index()
         {
-              return _context.Employee != null ? 
-                          View(await _context.Employee.ToListAsync()) :
-                          Problem("Entity set 'CPMSContext.Employee'  is null.");
+            var cPMSContext = _context.Employee.Include(e => e.Department);
+            return View(await cPMSContext.ToListAsync());
         }
 
         // GET: Employees/Details/5
@@ -36,6 +35,7 @@ namespace CPMS.Controllers
             }
 
             var employee = await _context.Employee
+                .Include(e => e.Department)
                 .FirstOrDefaultAsync(m => m.EmployeeId == id);
             if (employee == null)
             {
@@ -48,6 +48,7 @@ namespace CPMS.Controllers
         // GET: Employees/Create
         public IActionResult Create()
         {
+            ViewData["DepartmentId"] = new SelectList(_context.Department, "DepartmentId", "DepartmentId");
             return View();
         }
 
@@ -56,7 +57,7 @@ namespace CPMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EmployeeId,Name,Email,DateOfJoining,DepartmentId")] Employee employee)
+        public async Task<IActionResult> Create([Bind("EmployeeId,Name,Email,DateOfJoining,DepartmentId,DepartmentName")] Employee employee)
         {
             if (ModelState.IsValid)
             {
@@ -64,6 +65,7 @@ namespace CPMS.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["DepartmentId"] = new SelectList(_context.Department, "DepartmentId", "DepartmentId", employee.DepartmentId);
             return View(employee);
         }
 
@@ -80,6 +82,7 @@ namespace CPMS.Controllers
             {
                 return NotFound();
             }
+            ViewData["DepartmentId"] = new SelectList(_context.Department, "DepartmentId", "DepartmentId", employee.DepartmentId);
             return View(employee);
         }
 
@@ -88,7 +91,7 @@ namespace CPMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("EmployeeId,Name,Email,DateOfJoining,DepartmentId")] Employee employee)
+        public async Task<IActionResult> Edit(int id, [Bind("EmployeeId,Name,Email,DateOfJoining,DepartmentId,DepartmentName")] Employee employee)
         {
             if (id != employee.EmployeeId)
             {
@@ -115,6 +118,7 @@ namespace CPMS.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["DepartmentId"] = new SelectList(_context.Department, "DepartmentId", "DepartmentId", employee.DepartmentId);
             return View(employee);
         }
 
@@ -127,6 +131,7 @@ namespace CPMS.Controllers
             }
 
             var employee = await _context.Employee
+                .Include(e => e.Department)
                 .FirstOrDefaultAsync(m => m.EmployeeId == id);
             if (employee == null)
             {

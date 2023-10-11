@@ -2,6 +2,7 @@
 using CPMS.Models;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace CPMS.Services;
 public class ProjectService : IProjectService
@@ -15,24 +16,24 @@ public class ProjectService : IProjectService
 
     public async Task<IEnumerable<ProjectResponse>> GetProjectsAsync(int page, int pageSize)
     {
-        var projectResponses = await _dbContext.ProjectResponse
+        var projectResponses = await _dbContext.Project
             .Skip((page - 1) * pageSize)
+            .Include(p => p.Employees)
             .Take(pageSize)
             .Select(p => new ProjectResponse
             {
                 ProjectId = p.ProjectId,
-                ProjectName = p.ProjectName,
-                ProjectStartDate = p.ProjectStartDate,
-                ProjectEndDate = p.ProjectEndDate,
+                ProjectName = p.Name,
+                ProjectStartDate = p.StartDate,
+                ProjectEndDate = p.EndDate,
                 ProjectManagerName = p.ProjectManagerName,
                 ProjectManagerEmail = p.ProjectManagerEmail,
-                Emp_id= p.Emp_id,
-                Employees = p.Employees.Select(e=> new Employee
+                Employees = p.Employees.Select(e => new Employee
                 {
-                    Name = "hello",
-                    Email = "hello@1.com",
+                    Name = e.Name,
+                    Email = e.Email,
                     DateOfJoining = e.DateOfJoining,
-                    DepartmentName = "Test"
+                    DepartmentName = e.DepartmentName
                 }).ToList()
             })
             .ToListAsync();

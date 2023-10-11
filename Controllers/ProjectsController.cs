@@ -56,7 +56,7 @@ namespace CPMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProjectId,Name,StartDate,EndDate,ProjectManagerId")] Project project)
+        public async Task<IActionResult> Create([Bind("ProjectId,Name,StartDate,EndDate,ProjectManagerId,ProjectManagerName,ProjectManagerEmail")] Project project)
         {
             if (ModelState.IsValid)
             {
@@ -88,7 +88,7 @@ namespace CPMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProjectId,Name,StartDate,EndDate,ProjectManagerId")] Project project)
+        public async Task<IActionResult> Edit(int id, [Bind("ProjectId,Name,StartDate,EndDate,ProjectManagerId,ProjectManagerName,ProjectManagerEmail")] Project project)
         {
             if (id != project.ProjectId)
             {
@@ -159,6 +159,5 @@ namespace CPMS.Controllers
         {
           return (_context.Project?.Any(e => e.ProjectId == id)).GetValueOrDefault();
         }
-
     }
 }
